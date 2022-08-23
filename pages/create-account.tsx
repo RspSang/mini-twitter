@@ -9,6 +9,7 @@ import useMutation from "../lib/client/useMutation";
 interface IForm {
   name: string;
   email: string;
+  result?: string;
 }
 
 interface CreateAccountResponse {
@@ -22,6 +23,8 @@ export default () => {
     register,
     handleSubmit,
     formState: { errors },
+    setError,
+    clearErrors,
   } = useForm<IForm>();
   const [createAccount, { data, loading }] = useMutation<CreateAccountResponse>(
     "/api/create-account"
@@ -31,6 +34,9 @@ export default () => {
     if (loading) return;
     createAccount({ ...data });
   };
+  const clearError = () => {
+    clearErrors("result");
+  };
   useEffect(() => {
     if (data?.ok) {
       alert("account created please log in");
@@ -39,7 +45,7 @@ export default () => {
       });
     }
     if (data?.error) {
-      alert(data.error);
+      setError("result", { message: data.error });
     }
   }, [data, router]);
   return (
@@ -53,6 +59,7 @@ export default () => {
                 required: "Please write down your name.",
               })}
               type="text"
+              onFocus={clearError}
               placeholder="Name"
               required
             />
@@ -61,12 +68,19 @@ export default () => {
               name="email"
               register={register("email", {
                 required: "Please write down your email.",
+                pattern: {
+                  value:
+                    /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/,
+                  message: "Only allow email",
+                },
               })}
               type="email"
+              onFocus={clearError}
               placeholder="Email"
               required
             />
             {errors?.email?.message}
+            {errors?.result?.message}
           </div>
         </div>
         <div className="w-1/2 mx-auto mt-8">

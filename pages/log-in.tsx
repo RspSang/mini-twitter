@@ -1,3 +1,5 @@
+import { useRouter } from "next/router";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import Button from "../components/button";
 import Input from "../components/input";
@@ -11,10 +13,10 @@ interface LoginResponse {
 
 interface IForm {
   email: string;
-  password: string;
 }
 
 export default function Login() {
+  const router = useRouter();
   const [loginMutation, { data, loading }] =
     useMutation<LoginResponse>("/api/log-in");
   const {
@@ -24,9 +26,12 @@ export default function Login() {
   } = useForm<IForm>();
   const onSubmit = (data: IForm) => {
     if (loading) return;
-    console.log(data);
-    // loginMutation({ ...data });
+    loginMutation({ ...data });
   };
+
+  useEffect(() => {
+    router.push("/");
+  }, [data, router]);
 
   return (
     <Modal type="login" backPath="/auth">

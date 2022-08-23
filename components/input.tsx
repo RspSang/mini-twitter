@@ -6,6 +6,7 @@ interface InputProps {
   register: UseFormRegisterReturn;
   placeholder?: string;
   required?: boolean;
+  onFocus?: () => void;
 }
 
 export default function Input({
@@ -14,6 +15,7 @@ export default function Input({
   placeholder,
   type,
   required = false,
+  onFocus,
 }: InputProps) {
   return (
     <input
@@ -22,6 +24,7 @@ export default function Input({
       placeholder={placeholder}
       {...register}
       type={type}
+      onFocus={onFocus}
       className="border-2 border-[#188CD8] w-full rounded-full py-2 px-4"
     />
   );
