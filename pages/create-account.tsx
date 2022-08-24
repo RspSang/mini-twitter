@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import useSWR from "swr";
 import Button from "../components/button";
 import Input from "../components/input";
 import Modal from "../components/modal";
@@ -19,6 +20,7 @@ interface CreateAccountResponse {
 
 export default () => {
   const router = useRouter();
+  const { data: meData } = useSWR("/api/me");
   const {
     register,
     handleSubmit,
@@ -38,6 +40,7 @@ export default () => {
     clearErrors("result");
   };
   useEffect(() => {
+    if (meData && meData.me) router.push("/");
     if (data?.ok) {
       alert("account created please log in");
       router.push({
@@ -47,7 +50,7 @@ export default () => {
     if (data?.error) {
       setError("result", { message: data.error });
     }
-  }, [data, router]);
+  }, [data, meData, router]);
   return (
     <Modal type="signup" backPath="/auth">
       <form onSubmit={handleSubmit(onSubmit)}>

@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import useSWR from "swr";
 import Button from "../components/button";
 import Input from "../components/input";
 import Modal from "../components/modal";
@@ -17,21 +18,29 @@ interface IForm {
 
 export default function Login() {
   const router = useRouter();
+  const { data: meData } = useSWR("/api/me");
   const [loginMutation, { data, loading }] =
     useMutation<LoginResponse>("/api/log-in");
   const {
     register,
     handleSubmit,
     formState: { errors },
+    setError,
+    clearErrors,
   } = useForm<IForm>();
   const onSubmit = (data: IForm) => {
     if (loading) return;
     loginMutation({ ...data });
   };
+  const clearError = () => {
+    clearErrors("email");
+  };
 
   useEffect(() => {
-    router.push("/");
-  }, [data, router]);
+    if (meData && meData.me) router.push("/");
+    if (data && data.error) setError("email", { message: data.error });
+    if (data?.ok) router.push("/");
+  }, [data, router, meData]);
 
   return (
     <Modal type="login" backPath="/auth">
@@ -43,6 +52,7 @@ export default function Login() {
               register={register("email", {
                 required: "Please write down your email.",
               })}
+              onFocus={clearError}
               type="email"
               placeholder="Email"
               required

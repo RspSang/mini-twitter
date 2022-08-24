@@ -9,7 +9,7 @@ declare module "iron-session" {
 }
 
 const cookieOptions = {
-  cookieName: "nomad-challenge",
+  cookieName: "nomad-challenge-mini-twitter",
   password: process.env.COOKIE_PW!,
 };
 

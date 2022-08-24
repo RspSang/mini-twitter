@@ -9,12 +9,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       return res.json({ ok: false, error: "User not found" });
     const me = await db.user.findUnique({
       where: {
-        id: req.session.user.id
-      }
+        id: req.session.user.id,
+      },
     });
     return res.json({ ok: true, me });
   } catch (error) {
-    console.error(error);
     return res.json({ ok: false, error: "User not found" });
   }
 }
@@ -22,6 +21,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 export default withApiSession(
   withHandler({
     methods: ["GET"],
-    handler
+    handler,
   })
 );
