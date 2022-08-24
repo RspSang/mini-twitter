@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import withHandler from "../../lib/server/withHandler";
-import { withApiSession } from "../../lib/server/withSession";
-import db from "../../lib/db";
+import withHandler from "../../../lib/server/withHandler";
+import { withApiSession } from "../../../lib/server/withSession";
+import db from "../../../lib/db";
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "POST") {
@@ -21,13 +21,20 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   }
   if (req.method === "GET") {
     try {
+      const {
+        session: { user },
+      } = req;
       const tweets = await db.tweet.findMany({
         select: {
           user: { select: { name: true } },
+          id: true,
           payload: true,
           createdAt: true,
+          _count: { select: { likes: true } },
+          likes: { where: { userId: user?.id }, select: { userId: true } },
         },
       });
+
       return res.json({ ok: true, tweets });
     } catch (error) {
       return res.json({ ok: false, error: error });

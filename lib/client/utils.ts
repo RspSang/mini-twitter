@@ -9,11 +9,11 @@ export function elapsedTime(date: Date) {
   const diff = end - start; // 경과 시간
 
   const times = [
-    { time: "Minute", milliSeconds: 1000 * 60 },
-    { time: "Hour", milliSeconds: 1000 * 60 * 60 },
-    { time: "Day", milliSeconds: 1000 * 60 * 60 * 24 },
-    { time: "Month", milliSeconds: 1000 * 60 * 60 * 24 * 30 },
-    { time: "Year", milliSeconds: 1000 * 60 * 60 * 24 * 365 },
+    { time: "Minutes", milliSeconds: 1000 * 60 },
+    { time: "Hours", milliSeconds: 1000 * 60 * 60 },
+    { time: "Days", milliSeconds: 1000 * 60 * 60 * 24 },
+    { time: "Months", milliSeconds: 1000 * 60 * 60 * 24 * 30 },
+    { time: "Years", milliSeconds: 1000 * 60 * 60 * 24 * 365 },
   ].reverse();
 
   // 년 단위부터 알맞는 단위 찾기
@@ -29,4 +29,3 @@ export function elapsedTime(date: Date) {
   // 모든 단위가 맞지 않을 시
   return "Recent";
 }
-
