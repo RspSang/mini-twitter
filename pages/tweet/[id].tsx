@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { userInfo } from "os";
+import { useEffect } from "react";
 import useSWR from "swr";
 import { TweetsWithUser } from "..";
 import TweetCard from "../../components/tweetCard";
@@ -17,31 +17,26 @@ export default function TweetOne() {
   const { data, mutate } = useSWR<TweetResponse>(
     router.query.id ? `/api/tweet/${router.query.id}` : ""
   );
-  const [like, { loading }] = useMutation(`/api/tweet/${router.query.id}/like`);
+  const [like, { data: likeData, loading }] = useMutation(
+    `/api/tweet/${router.query.id}/like`
+  );
   const backClick = () => {
     router.back();
   };
   const onLikeClick = () => {
     if (loading) return;
     like({});
-    mutate();
-    // mutate({
-    //   ...data,
-
-    //   _count: {
-    //     ...data.post._count,
-    //     wonderings: data.isWondering
-    //       ? data?.post._count.wonderings - 1
-    //       : data?.post._count.wonderings + 1,
-    //   },
-    // });
   };
+
+  useEffect(() => {
+    if (likeData && likeData.ok) mutate();
+  }, [likeData]);
 
   return (
     <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity">
       <div className="fixed z-10 inset-0 overflow-y-auto">
         <div className="flex items-center justify-center min-h-full text-center ">
-          <div className="relative bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all w-3/5 px-4 py-4">
+          <div className="relative bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all w-3/5 px-4 py-4 max-w-4xl">
             <div
               className="p-1 hover:bg-gray-200 hover:cursor-pointer rounded-full w-8"
               onClick={backClick}

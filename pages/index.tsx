@@ -38,7 +38,7 @@ export default () => {
   const { user } = useUser();
   const { register, handleSubmit, setValue } = useForm<TweetFormData>();
   const [logout, { data: logoutData }] = useMutation("/api/logout");
-  const onClick = async () => {
+  const onLogoutClick = () => {
     logout({});
   };
   const [tweet, { data: submitTwitterData, loading }] =
@@ -51,13 +51,12 @@ export default () => {
   const { data: tweetsData, mutate } = useSWR<TweetResponse>("/api/tweet");
 
   useEffect(() => {
-    if (logoutData) router.push("/auth");
+    if (logoutData && logoutData.ok) router.push("/auth");
   }, [logoutData, router]);
 
   useEffect(() => {
     if (submitTwitterData?.ok) mutate();
   }, [submitTwitterData]);
-
 
   return (
     <>
@@ -193,7 +192,7 @@ export default () => {
               Tweet
             </div>
             <button
-              onClick={onClick}
+              onClick={onLogoutClick}
               className="border-[#339DDB] shadow-md border-2 w-full rounded-3xl text-[#339DDB] hover:cursor-pointer hover:bg-[#eeebeb]"
             >
               log out
@@ -332,13 +331,9 @@ export default () => {
           <div>
             {tweetsData?.ok && tweetsData?.tweets
               ? tweetsData.tweets.map((tweet) => (
-                  <Link href={`tweet/${tweet.id}`}>
+                  <Link href={`tweet/${tweet.id}`} key={tweet.id}>
                     <a>
-                      <TweetCard
-                        key={tweet.id}
-                        tweet={tweet}
-                        userId={user.id}
-                      />
+                      <TweetCard tweet={tweet} userId={user?.id} />
                       <div className="w-full border-gray-300 border-b-[1px]" />
                     </a>
                   </Link>
